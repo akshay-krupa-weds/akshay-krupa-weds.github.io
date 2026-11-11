@@ -33,8 +33,10 @@ a{color:inherit}
 @keyframes fi{to{opacity:1}}
 .when{font:400 clamp(18px,2.4vw,24px) var(--serif);letter-spacing:.04em;opacity:0;animation:fi 1.4s 2.4s forwards}
 .when b{font-weight:600;color:#f3d79a}
-.hint{position:absolute;z-index:3;bottom:18px;left:50%;width:1px;height:46px;background:linear-gradient(#fff,transparent);animation:dr 2s infinite}
-@keyframes dr{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.scroll-cue{position:fixed;z-index:20;right:clamp(16px,4vw,36px);bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;min-height:48px;max-width:calc(100vw - 32px);padding:10px 18px;border:1px solid rgba(255,255,255,.75);border-radius:999px;background:rgba(18,8,22,.82);box-shadow:0 4px 18px rgba(0,0,0,.2);color:#fff;text-align:center;font:500 14px/1.3 var(--sans);cursor:pointer}
+.scroll-cue[hidden]{display:none}
+.scroll-cue:focus-visible{outline:3px solid #f3d79a;outline-offset:3px}
+.scroll-cue svg{width:20px;height:20px;flex:none}
 .petal{position:fixed;top:-30px;z-index:5;pointer-events:none;border-radius:150% 0 150% 0;opacity:.8;animation:fall linear infinite}
 @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--r))}}
 section{padding:12vh 7vw;position:relative}
@@ -111,10 +113,10 @@ html.closed .hero *{animation-play-state:paused}
 <h1 class="names" aria-label="Akshay Krishna and Krupashree"><span class="n">Akshay Krishna</span><br><span class="amp">&amp;</span><span class="n">Krupashree</span></h1>
 <div class="when"><b>Sunday, 13 December 2026</b><br>Annur</div>
 </div>
-<div class="hint"></div>
+<button class="scroll-cue" type="button" aria-label="Scroll down for more invitation details">More below<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
 </header>
 
-<section><div class="wrap">
+<section id="invitation"><div class="wrap">
 <p class="lead">Smt. Geetha Upendran, and Smt. Kalpagam Sekar &amp; Sri. A.R. Sekar, request your esteemed presence with family and friends on the auspicious occasion of the marriage of their children</p>
 <h2 class="big">Mr. Akshay Krishna Upendran</h2>
 <p class="lead">with</p>
@@ -171,7 +173,11 @@ for(var i=0;i<20;i++){var p=document.createElement('i');p.className='petal';var 
 p.style.cssText='left:'+Math.random()*100+'vw;width:'+z+'px;height:'+z*1.3+'px;background:'+cols[i%5]+';animation-duration:'+(11+Math.random()*12)+'s;animation-delay:-'+Math.random()*20+'s;--dx:'+(Math.random()*160-80)+'px;--r:'+(360+Math.random()*540)+'deg';document.body.appendChild(p)}
 var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.2});
 document.querySelectorAll('.day').forEach(function(d,i){d.style.transitionDelay=(i*0.08)+'s';io.observe(d)});
-var T=new Date('2026-12-13T07:30:00+05:30').getTime();
+var cue=document.querySelector('.scroll-cue'),footer=document.querySelector('footer');
+cue.addEventListener('click',function(){window.scrollBy({top:Math.max(window.innerHeight*.75,400),behavior:'smooth'})});
+var footerObserver=new IntersectionObserver(function(e){cue.hidden=e[0].isIntersecting},{threshold:.1});
+footerObserver.observe(footer);
+var T=new Date('2026-12-13T07:40:00+05:30').getTime();
 function tick(){var s=Math.max(0,Math.floor((T-Date.now())/1000));
 document.getElementById('d').textContent=Math.floor(s/86400);
 document.getElementById('h').textContent=Math.floor(s%86400/3600);
